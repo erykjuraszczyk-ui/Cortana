@@ -146,6 +146,40 @@ class TransactionalOutbox:
                            counts.get("failed", 0), counts.get("delivered", 0))
 
 
+
+    def list_failed(self, *, limit: int = 100) -> tuple[dict, ...]:
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+            raise ValueError("limit must be from 1 to 1000")
+        with self._connect() as db:
+            rows = db.execute(
+                """SELECT event_id, event_type, document_id, attempts, last_error,
+                          created_at, available_at
+                   FROM memory_outbox WHERE status='failed'
+                   ORDER BY created_at, event_id LIMIT ?""", (limit,)
+            ).fetchall()
+        return tuple(dict(row) for row in rows)
+
+    def requeue_failed(self, event_id: str) -> bool:
+        if not isinstance(event_id, str) or not event_id.strip():
+            raise ValueError("event_id must be a non-empty string")
+        with self._connect() as db:
+            cursor = db.execute(
+                """UPDATE memory_outbox SET status='pending', available_at=?,
+                          attempts=0, last_error=''
+                   WHERE event_id=? AND status='failed'""", (time.time(), event_id)
+            )
+            return cursor.rowcount == 1
+
+    def purge_delivered_before(self, cutoff: float) -> int:
+        if isinstance(cutoff, bool) or not isinstance(cutoff, (int, float)):
+            raise ValueError("cutoff must be a timestamp")
+        with self._connect() as db:
+            cursor = db.execute(
+                "DELETE FROM memory_outbox WHERE status='delivered' AND delivered_at<?",
+                (float(cutoff),)
+            )
+            return int(cursor.rowcount)
+
 class RetryManager:
     def __init__(self, *, base_delay_seconds: float = 1.0, max_delay_seconds: float = 300.0,
                  max_attempts: int = 8) -> None:
@@ -245,36 +279,3 @@ class MemoryIntegrationService:
         self.outbox.enqueue("delete", document_id)
         self.event_bus.dispatch()
         return removed
-
-    def list_failed(self, *, limit: int = 100) -> tuple[dict, ...]:
-        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
-            raise ValueError("limit must be from 1 to 1000")
-        with self._connect() as db:
-            rows = db.execute(
-                """SELECT event_id, event_type, document_id, attempts, last_error,
-                          created_at, available_at
-                   FROM memory_outbox WHERE status='failed'
-                   ORDER BY created_at, event_id LIMIT ?""", (limit,)
-            ).fetchall()
-        return tuple(dict(row) for row in rows)
-
-    def requeue_failed(self, event_id: str) -> bool:
-        if not isinstance(event_id, str) or not event_id.strip():
-            raise ValueError("event_id must be a non-empty string")
-        with self._connect() as db:
-            cursor = db.execute(
-                """UPDATE memory_outbox SET status='pending', available_at=?,
-                          attempts=0, last_error=''
-                   WHERE event_id=? AND status='failed'""", (time.time(), event_id)
-            )
-            return cursor.rowcount == 1
-
-    def purge_delivered_before(self, cutoff: float) -> int:
-        if isinstance(cutoff, bool) or not isinstance(cutoff, (int, float)):
-            raise ValueError("cutoff must be a timestamp")
-        with self._connect() as db:
-            cursor = db.execute(
-                "DELETE FROM memory_outbox WHERE status='delivered' AND delivered_at<?",
-                (float(cutoff),)
-            )
-            return int(cursor.rowcount)

@@ -7,6 +7,7 @@ from .embeddings import LocalSentenceTransformer
 from .memory import EpisodicMemoryStore, MemoryEvent, MemorySummary
 from .memory_reflection import MemoryAwareReflectionEngine, MemoryReflectionProposal
 from .persistence import SoulProfileStore
+from .persistent_memory import HybridReranker, IndexHealth, MemoryIndexSynchronizer, PersistentBM25Index
 from .qdrant_store import QdrantSemanticMemoryStore
 from .reflection import ReflectionEngine, ReflectionInput, ReflectionProposal
 from .retrieval import BM25Index, HybridRetriever, LexicalSearchResult, tokenize
@@ -17,7 +18,7 @@ from .semantic import (
 )
 
 __all__ = [
-    "AffectEngine", "AffectState", "BM25Index", "ContextFrame", "ContextResolver",
+    "AffectEngine", "AffectState", "BM25Index", "PersistentBM25Index", "MemoryIndexSynchronizer", "HybridReranker", "IndexHealth", "ContextFrame", "ContextResolver",
     "ContextItem", "EmbeddingProvider", "EpisodicMemoryStore",
     "LongTermContextAssembler", "MemoryEvent", "MemorySummary",
     "MemoryAwareReflectionEngine", "MemoryReflectionProposal",

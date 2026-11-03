@@ -1,5 +1,6 @@
-"""Cortana Soul Core: identity and behavior configuration."""
+"""Cortana Soul Core: identity, validation and persistence."""
 
 from .core import SoulCore, SoulProfile, load_profile
+from .persistence import SoulProfileStore
 
-__all__ = ["SoulCore", "SoulProfile", "load_profile"]
+__all__ = ["SoulCore", "SoulProfile", "SoulProfileStore", "load_profile"]

@@ -6,6 +6,7 @@ from .core import SoulCore, SoulProfile, load_profile
 from .embeddings import LocalSentenceTransformer
 from .memory import EpisodicMemoryStore, MemoryEvent, MemorySummary
 from .memory_reflection import MemoryAwareReflectionEngine, MemoryReflectionProposal
+from .memory_integration import (MemoryEvent, MemoryEventBus, MemoryIntegrationService, MemoryRecoveryEngine, MemoryConsistencyGuard, OutboxStats, RetryManager, TransactionalOutbox)
 from .persistence import SoulProfileStore
 from .persistent_memory import HybridReranker, IndexHealth, MemoryIndexSynchronizer, PersistentBM25Index
 from .qdrant_store import QdrantSemanticMemoryStore
@@ -21,7 +22,7 @@ __all__ = [
     "AffectEngine", "AffectState", "BM25Index", "PersistentBM25Index", "MemoryIndexSynchronizer", "HybridReranker", "IndexHealth", "ContextFrame", "ContextResolver",
     "ContextItem", "EmbeddingProvider", "EpisodicMemoryStore",
     "LongTermContextAssembler", "MemoryEvent", "MemorySummary",
-    "MemoryAwareReflectionEngine", "MemoryReflectionProposal",
+    "MemoryAwareReflectionEngine", "MemoryReflectionProposal", "MemoryIntegrationService", "MemoryEventBus", "MemoryEvent", "TransactionalOutbox", "RetryManager", "MemoryConsistencyGuard", "MemoryRecoveryEngine", "OutboxStats",
     "RetrievedContext", "LocalSentenceTransformer", "QdrantSemanticMemoryStore",
     "HybridRetriever", "LexicalSearchResult", "tokenize",
     "SemanticMemoryRecord", "SemanticMemoryStore", "SemanticSearchResult",

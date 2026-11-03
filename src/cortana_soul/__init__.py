@@ -7,6 +7,9 @@ from .memory import EpisodicMemoryStore, MemoryEvent, MemorySummary
 from .memory_reflection import MemoryAwareReflectionEngine, MemoryReflectionProposal
 from .persistence import SoulProfileStore
 from .reflection import ReflectionEngine, ReflectionInput, ReflectionProposal
+from .embeddings import LocalSentenceTransformer
+from .qdrant_store import QdrantSemanticMemoryStore
+from .retrieval import BM25Index, HybridRetriever, LexicalSearchResult, tokenize
 from .semantic import (
     ContextItem, EmbeddingProvider, LongTermContextAssembler,
     RetrievedContext, SemanticMemoryRecord, SemanticMemoryStore,
@@ -14,11 +17,12 @@ from .semantic import (
 )
 
 __all__ = [
-    "AffectEngine", "AffectState", "ContextFrame", "ContextResolver",
+    "AffectEngine", "AffectState", "BM25Index", "ContextFrame", "ContextResolver",
     "ContextItem", "EmbeddingProvider", "EpisodicMemoryStore",
     "LongTermContextAssembler", "MemoryEvent", "MemorySummary",
     "MemoryAwareReflectionEngine", "MemoryReflectionProposal",
-    "RetrievedContext", "SemanticMemoryRecord", "SemanticMemoryStore",
+    "RetrievedContext", "LocalSentenceTransformer", "QdrantSemanticMemoryStore",
+    "HybridRetriever", "LexicalSearchResult", "tokenize", "SemanticMemoryRecord", "SemanticMemoryStore",
     "SemanticSearchResult", "ReflectionEngine", "ReflectionInput",
     "ReflectionProposal", "SoulCore", "SoulProfile", "SoulProfileStore",
     "load_profile", "split_into_chunks",

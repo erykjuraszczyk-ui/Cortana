@@ -72,13 +72,18 @@ class SemanticMemoryTests(unittest.TestCase):
         self.assertEqual(context.items[0].source, "astronomy")
         self.assertLessEqual(context.character_count, 200)
 
-    def test_invalid_embedding_dimension_is_rejected(self):
+    def test_invalid_embedding_dimension_is_rejected_when_embedding_is_used(self):
         class BadEmbedder:
             dimension = 3
+
             def embed(self, text):
                 return [1.0, 2.0]
+
+        bad_store = SemanticMemoryStore(
+            Path(self.temp.name) / "bad.sqlite3", BadEmbedder()
+        )
         with self.assertRaises(ValueError):
-            SemanticMemoryStore(Path(self.temp.name) / "bad.sqlite3", BadEmbedder())
+            bad_store.ingest("Invalid vector", source="test", consent=True)
 
 
 if __name__ == "__main__":

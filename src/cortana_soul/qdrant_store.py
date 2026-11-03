@@ -113,6 +113,41 @@ class QdrantSemanticMemoryStore:
             results.append(SemanticSearchResult(record, score))
         return tuple(results)
 
+    def list_document_records(self, document_id: str | None = None):
+        """Scroll all authoritative payload records for index rebuild/reconciliation."""
+        records = []
+        offset = None
+        query_filter = None
+        if document_id is not None:
+            if not isinstance(document_id, str) or not document_id.strip():
+                raise ValueError("document_id must be a non-empty string")
+            query_filter = self._models.Filter(must=[
+                self._models.FieldCondition(
+                    key="document_id", match=self._models.MatchValue(value=document_id)
+                )
+            ])
+        while True:
+            points, offset = self.client.scroll(
+                collection_name=self.collection_name,
+                scroll_filter=query_filter,
+                limit=256,
+                offset=offset,
+                with_payload=True,
+                with_vectors=False,
+            )
+            for point in points:
+                payload = point.payload or {}
+                records.append(SemanticMemoryRecord(
+                    record_id=str(point.id),
+                    document_id=str(payload.get("document_id", "")),
+                    source=str(payload.get("source", "unknown")),
+                    text=str(payload.get("text", "")),
+                    created_at=str(payload.get("created_at", "")),
+                ))
+            if offset is None:
+                break
+        return tuple(records)
+
     def delete_document(self, document_id: str, *, confirmed: bool = False) -> int:
         if confirmed is not True:
             raise PermissionError("deleting semantic memory requires explicit confirmation")

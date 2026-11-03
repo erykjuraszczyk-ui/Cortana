@@ -186,6 +186,19 @@ class SemanticMemoryStore:
         ranked.sort(key=lambda item: item.score, reverse=True)
         return tuple(ranked[:top_k])
 
+    def list_document_records(self, document_id: str | None = None) -> tuple[SemanticMemoryRecord, ...]:
+        """Return authoritative records for synchronization or full recovery."""
+        query = ("SELECT record_id, document_id, source, text, created_at FROM semantic_memory"
+                 + (" WHERE document_id = ?" if document_id is not None else "")
+                 + " ORDER BY record_id")
+        params = (document_id,) if document_id is not None else ()
+        with self._connect() as db:
+            rows = db.execute(query, params).fetchall()
+        return tuple(SemanticMemoryRecord(
+            record_id=row["record_id"], document_id=row["document_id"],
+            source=row["source"], text=row["text"], created_at=row["created_at"],
+        ) for row in rows)
+
     def delete_document(self, document_id: str, *, confirmed: bool = False) -> int:
         if confirmed is not True:
             raise PermissionError("deleting semantic memory requires explicit confirmation")

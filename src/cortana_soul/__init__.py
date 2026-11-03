@@ -17,6 +17,10 @@ from .memory_integration import (
     TransactionalOutbox,
 )
 from .persistence import SoulProfileStore
+from .memory_worker import (
+    DeadLetterQueue, MemoryLifecycleManager, MemoryMetrics,
+    MemoryMetricsSnapshot, MemoryScheduler, MemoryWorker,
+)
 from .persistent_memory import (
     HybridReranker, IndexHealth, MemoryIndexSynchronizer, PersistentBM25Index,
 )
@@ -38,6 +42,8 @@ __all__ = [
     "MemoryOutboxEvent", "MemoryIntegrationService", "MemoryEventBus",
     "TransactionalOutbox", "RetryManager", "MemoryConsistencyGuard",
     "MemoryRecoveryEngine", "OutboxStats", "RetrievedContext",
+    "MemoryWorker", "MemoryScheduler", "DeadLetterQueue",
+    "MemoryMetrics", "MemoryMetricsSnapshot", "MemoryLifecycleManager",
     "LocalSentenceTransformer", "QdrantSemanticMemoryStore",
     "HybridRetriever", "LexicalSearchResult", "tokenize",
     "SemanticMemoryRecord", "SemanticMemoryStore", "SemanticSearchResult",

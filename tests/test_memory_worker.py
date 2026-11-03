@@ -81,10 +81,14 @@ class MemoryWorkerTests(unittest.TestCase):
 
     def test_worker_rejects_second_run_forever_start(self):
         worker = MemoryWorker(self.bus, idle_seconds=0.01)
-        worker.stop()
         thread = threading.Thread(target=worker.run_forever)
         thread.start()
+        deadline = time.time() + 1
+        while not worker._started and time.time() < deadline:
+            time.sleep(0.001)
+        worker.stop()
         thread.join(timeout=1)
+        self.assertFalse(thread.is_alive())
         with self.assertRaises(RuntimeError):
             worker.run_forever()
 

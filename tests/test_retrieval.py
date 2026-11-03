@@ -40,7 +40,7 @@ class RetrievalTests(unittest.TestCase):
 
     def test_hybrid_merges_semantic_and_lexical_candidates(self):
         def semantic(query, top_k):
-            return (Result(self.gamma, 0.95),)
+            return (Result(self.gamma, -0.5),)
         hybrid = HybridRetriever(semantic, self.index)
         results = hybrid.search("Qdrant embeddings", top_k=3)
         ids = [item.record.record_id for item in results]

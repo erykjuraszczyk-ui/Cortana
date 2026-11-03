@@ -10,7 +10,7 @@ from typing import Callable, Iterable, Sequence
 from .semantic import SemanticSearchResult
 
 
-_TOKEN_RE = re.compile(r"[^\\W_]+", re.UNICODE)
+_TOKEN_RE = re.compile(r"[^\W_]+", re.UNICODE)
 
 
 def tokenize(text: str) -> tuple[str, ...]:
